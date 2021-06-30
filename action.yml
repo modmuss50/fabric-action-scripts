@@ -13,5 +13,5 @@ inputs:
     default: ${{ github.event.number }}
     required: false
 runs:
-  using: node16
+  using: node12
   main: index.js
