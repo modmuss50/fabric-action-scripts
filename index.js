@@ -6292,14 +6292,14 @@ var __webpack_exports__ = {};
 __nccwpck_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var lib_core = __nccwpck_require__(186);
+var core = __nccwpck_require__(186);
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var github = __nccwpck_require__(438);
+var lib_github = __nccwpck_require__(438);
 ;// CONCATENATED MODULE: ./lib/yarn-update-base.js
 
-async function yarn_update_base_yarnUpdateBase(github, issue_number) {
-    const owner = context.repo.owner;
-    const repo = context.repo.repo;
+async function yarnUpdateBase(github, issue_number) {
+    const owner = lib_github.context.repo.owner;
+    const repo = lib_github.context.repo.repo;
     const labels = await getLabels(github, issue_number);
     if (!labels.has("update-base")) {
         console.log("Nothing to do");
@@ -6357,8 +6357,8 @@ async function yarn_update_base_yarnUpdateBase(github, issue_number) {
 }
 async function getLabels(github, issue_number) {
     const resp = await github.issues.listLabelsOnIssue({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
+        owner: lib_github.context.repo.owner,
+        repo: lib_github.context.repo.repo,
         issue_number,
     });
     const data = await resp.data;
@@ -6372,15 +6372,17 @@ async function getLabels(github, issue_number) {
 async function main() {
     const token = core.getInput("github-token", { required: true });
     const context = core.getInput("context", { required: true });
-    const github = getOctokit(token, {});
+    const github = (0,lib_github.getOctokit)(token, {});
+    console.log("Fabric Actions script context: " + context);
     switch (context) {
         case "yarn-update-base":
             yarnUpdateBase(github.rest, parseInt(core.getInput("issue-number", { required: true })));
             break;
         default:
-            return;
+            throw new Error("Unknown context: " + context);
     }
 }
+main();
 
 })();
 
