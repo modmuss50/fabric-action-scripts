@@ -9942,8 +9942,7 @@ async function generateChangelogSinceRun(lastRun, commit_regex) {
 ;// CONCATENATED MODULE: ./lib/labels.js
 
 const labels = {
-    support: "This is a support issue",
-    hacks: "Hacks are not supported",
+    support: "👋 We use the issue tracker exclusively for final bug reports and feature requests. However, this issue appears to be better suited for either a [discussion thread](https://github.com/orgs/FabricMC/discussions), or a message on [our discord server](https://discord.gg/v6v4pMv). Please post your request on one of these, and the conversation can continue there.",
 };
 // Add a comment and close the issue when a specific label is present.
 async function labeled(github, label) {
