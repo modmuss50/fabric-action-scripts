@@ -9959,14 +9959,14 @@ async function labeled(github, label) {
         issue_number,
         body: labels[label],
     });
-    updateState(github, "closed");
+    await updateState(github, "closed");
 }
 // Reopen a closed issue when the label is removed.
 async function unlabeled(github, label) {
     if (!labels[label]) {
         return;
     }
-    updateState(github, "open");
+    await updateState(github, "open");
 }
 async function updateState(github, state) {
     const owner = lib_github.context.repo.owner;
@@ -9985,7 +9985,7 @@ async function updateState(github, state) {
         owner,
         repo,
         issue_number,
-        state: "open",
+        state: state,
     });
 }
 
