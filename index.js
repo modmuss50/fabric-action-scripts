@@ -9946,30 +9946,32 @@ const labels = {
     hacks: "Hacks are not supported",
 };
 // Add a comment and close the issue when a specific label is present.
-async function labeled(github, issue_number, label) {
+async function labeled(github, label) {
     if (!labels[label]) {
         return;
     }
     const owner = lib_github.context.repo.owner;
     const repo = lib_github.context.repo.repo;
+    const issue_number = lib_github.context.payload.number;
     await github.issues.createComment({
         owner,
         repo,
         issue_number,
         body: labels[label],
     });
-    updateState(github, issue_number, "closed");
+    updateState(github, "closed");
 }
 // Reopen a closed issue when the label is removed.
-async function unlabeled(github, issue_number, label) {
+async function unlabeled(github, label) {
     if (!labels[label]) {
         return;
     }
-    updateState(github, issue_number, "open");
+    updateState(github, "open");
 }
-async function updateState(github, issue_number, state) {
+async function updateState(github, state) {
     const owner = lib_github.context.repo.owner;
     const repo = lib_github.context.repo.repo;
+    const issue_number = lib_github.context.payload.number;
     const issue = await github.issues.get({
         owner,
         repo,
@@ -10006,10 +10008,10 @@ async function main() {
             await generateChangelog(github.rest, core.getInput("workflow_id", { required: true }), core.getInput("commit_regex", { required: false }));
             break;
         case "labeled":
-            await labeled(github.rest, parseInt(core.getInput("issue-number", { required: true })), core.getInput("label", { required: true }));
+            await labeled(github.rest, core.getInput("label", { required: true }));
             break;
         case "unlabeled":
-            await unlabeled(github.rest, parseInt(core.getInput("issue-number", { required: true })), core.getInput("label", { required: true }));
+            await unlabeled(github.rest, core.getInput("label", { required: true }));
             break;
         default:
             throw new Error("Unknown context: " + context);
