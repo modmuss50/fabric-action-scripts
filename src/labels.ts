@@ -23,7 +23,7 @@ export async function labeled(github: RestEndpointMethods, label: string) {
     body: labels[label],
   });
 
-  updateState(github, "closed");
+  await updateState(github, "closed");
 }
 
 // Reopen a closed issue when the label is removed.
@@ -32,7 +32,7 @@ export async function unlabeled(github: RestEndpointMethods, label: string) {
     return;
   }
 
-  updateState(github, "open");
+  await updateState(github, "open");
 }
 
 async function updateState(
@@ -58,6 +58,6 @@ async function updateState(
     owner,
     repo,
     issue_number,
-    state: "open",
+    state: state,
   });
 }
