@@ -28,19 +28,11 @@ async function main(): Promise<void> {
       break;
 
     case "labeled":
-      await labeled(
-        github.rest,
-        parseInt(core.getInput("issue-number", { required: true })),
-        core.getInput("label", { required: true })
-      );
+      await labeled(github.rest, core.getInput("label", { required: true }));
       break;
 
     case "unlabeled":
-      await unlabeled(
-        github.rest,
-        parseInt(core.getInput("issue-number", { required: true })),
-        core.getInput("label", { required: true })
-      );
+      await unlabeled(github.rest, core.getInput("label", { required: true }));
       break;
     default:
       throw new Error("Unknown context: " + context);

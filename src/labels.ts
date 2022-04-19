@@ -7,17 +7,14 @@ const labels: { [label: string]: string } = {
 };
 
 // Add a comment and close the issue when a specific label is present.
-export async function labeled(
-  github: RestEndpointMethods,
-  issue_number: number,
-  label: string
-) {
+export async function labeled(github: RestEndpointMethods, label: string) {
   if (!labels[label]) {
     return;
   }
 
   const owner = context.repo.owner;
   const repo = context.repo.repo;
+  const issue_number = context.payload.number;
 
   await github.issues.createComment({
     owner,
@@ -26,29 +23,25 @@ export async function labeled(
     body: labels[label],
   });
 
-  updateState(github, issue_number, "closed");
+  updateState(github, "closed");
 }
 
 // Reopen a closed issue when the label is removed.
-export async function unlabeled(
-  github: RestEndpointMethods,
-  issue_number: number,
-  label: string
-) {
+export async function unlabeled(github: RestEndpointMethods, label: string) {
   if (!labels[label]) {
     return;
   }
 
-  updateState(github, issue_number, "open");
+  updateState(github, "open");
 }
 
 async function updateState(
   github: RestEndpointMethods,
-  issue_number: number,
   state: "open" | "closed"
 ) {
   const owner = context.repo.owner;
   const repo = context.repo.repo;
+  const issue_number = context.payload.number;
 
   const issue = await github.issues.get({
     owner,
