@@ -9939,7 +9939,56 @@ async function generateChangelogSinceRun(lastRun, commit_regex) {
     return log;
 }
 
+;// CONCATENATED MODULE: ./lib/labels.js
+
+const labels = {
+    support: "This is a support issue",
+    hacks: "Hacks are not supported",
+};
+// Add a comment and close the issue when a specific label is present.
+async function labeled(github, issue_number, label) {
+    if (!labels[label]) {
+        return;
+    }
+    const owner = lib_github.context.repo.owner;
+    const repo = lib_github.context.repo.repo;
+    await github.issues.createComment({
+        owner,
+        repo,
+        issue_number,
+        body: labels[label],
+    });
+    updateState(github, issue_number, "closed");
+}
+// Reopen a closed issue when the label is removed.
+async function unlabeled(github, issue_number, label) {
+    if (!labels[label]) {
+        return;
+    }
+    updateState(github, issue_number, "open");
+}
+async function updateState(github, issue_number, state) {
+    const owner = lib_github.context.repo.owner;
+    const repo = lib_github.context.repo.repo;
+    const issue = await github.issues.get({
+        owner,
+        repo,
+        issue_number,
+    });
+    if (issue.data.state == state) {
+        // Nothing to do.
+        return;
+    }
+    await github.issues.update({
+        owner,
+        repo,
+        issue_number,
+        state: "open",
+    });
+}
+
 ;// CONCATENATED MODULE: ./lib/main.js
+
 
 
 
@@ -9955,6 +10004,12 @@ async function main() {
             break;
         case "changelog":
             await generateChangelog(github.rest, core.getInput("workflow_id", { required: true }), core.getInput("commit_regex", { required: false }));
+            break;
+        case "labeled":
+            await labeled(github.rest, parseInt(core.getInput("issue-number", { required: true })), core.getInput("label", { required: true }));
+            break;
+        case "unlabeled":
+            await unlabeled(github.rest, parseInt(core.getInput("issue-number", { required: true })), core.getInput("label", { required: true }));
             break;
         default:
             throw new Error("Unknown context: " + context);
