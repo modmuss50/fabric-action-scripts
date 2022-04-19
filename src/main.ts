@@ -2,6 +2,7 @@ import * as core from "@actions/core";
 import { getOctokit } from "@actions/github";
 import { yarnUpdateBase } from "./yarn-update-base";
 import { generateChangelog } from "./changelog";
+import { labeled, unlabeled } from "./labels";
 
 async function main(): Promise<void> {
   const token = core.getInput("github-token", { required: true });
@@ -23,6 +24,22 @@ async function main(): Promise<void> {
         github.rest,
         core.getInput("workflow_id", { required: true }),
         core.getInput("commit_regex", { required: false })
+      );
+      break;
+
+    case "labeled":
+      await labeled(
+        github.rest,
+        parseInt(core.getInput("issue-number", { required: true })),
+        core.getInput("label", { required: true })
+      );
+      break;
+
+    case "unlabeled":
+      await unlabeled(
+        github.rest,
+        parseInt(core.getInput("issue-number", { required: true })),
+        core.getInput("label", { required: true })
       );
       break;
     default:
