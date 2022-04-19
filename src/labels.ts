@@ -14,7 +14,7 @@ export async function labeled(github: RestEndpointMethods, label: string) {
 
   const owner = context.repo.owner;
   const repo = context.repo.repo;
-  const issue_number = context.payload.number;
+  const issue_number = context.issue.number;
 
   await github.issues.createComment({
     owner,
@@ -41,7 +41,7 @@ async function updateState(
 ) {
   const owner = context.repo.owner;
   const repo = context.repo.repo;
-  const issue_number = context.payload.number;
+  const issue_number = context.issue.number;
 
   const issue = await github.issues.get({
     owner,
